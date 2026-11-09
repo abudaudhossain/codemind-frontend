@@ -162,3 +162,56 @@
     background: color-mix(in oklch, var(--brand) 28%, transparent);
   }
 }
+
+/* highlight.js tokens for CodeViewer — tuned for CodeMind dark/light surfaces */
+.hljs {
+  color: var(--foreground);
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: color-mix(in oklch, var(--brand) 80%, var(--foreground));
+}
+
+.hljs-string,
+.hljs-meta .hljs-string,
+.hljs-attribute {
+  color: color-mix(in oklch, var(--success) 75%, var(--foreground));
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable {
+  color: color-mix(in oklch, var(--warning) 70%, var(--foreground));
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name {
+  color: color-mix(in oklch, var(--chart-2) 80%, var(--foreground));
+}
+
+.hljs-type,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: color-mix(in oklch, var(--chart-1) 70%, var(--foreground));
+}
+
+.hljs-meta,
+.hljs-deletion,
+.hljs-regexp {
+  color: color-mix(in oklch, var(--destructive) 65%, var(--foreground));
+}

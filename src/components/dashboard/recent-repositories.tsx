@@ -45,7 +45,7 @@ export function RecentRepositories({ repositories }: RecentRepositoriesProps) {
             {repositories.map((repository) => (
               <li key={repository.id}>
                 <Link
-                  href="/repositories"
+                  href={`/repositories/${repository.id}`}
                   className="flex items-start gap-3 rounded-lg py-3 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground">

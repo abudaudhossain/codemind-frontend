@@ -58,3 +58,23 @@ export function DashboardSkeleton() {
     </div>
   );
 }
+
+export function RepositoryListSkeleton({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="grid gap-3">
+      {Array.from({ length: rows }).map((_, index) => (
+        <div
+          key={index}
+          className="flex items-start gap-3 rounded-xl border border-border p-4"
+        >
+          <Skeleton className="size-9 rounded-lg" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-2/3" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

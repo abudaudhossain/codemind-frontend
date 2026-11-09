@@ -35,6 +35,7 @@ export const DASHBOARD_NAV_ITEMS: NavItem[] = [
 export const ROUTE_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   repositories: "Repositories",
+  files: "Files",
   chat: "AI Chat",
   search: "Semantic Search",
   settings: "Settings",
