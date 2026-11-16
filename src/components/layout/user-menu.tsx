@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { UserProfile } from "@/types";
 import { cn } from "@/lib/utils";
+import { authService } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
 
 interface UserMenuProps {
   user: UserProfile;
@@ -28,6 +30,7 @@ export function UserMenu({
   variant = "header",
 }: UserMenuProps) {
   const isSidebar = variant === "sidebar";
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -86,10 +89,14 @@ export function UserMenu({
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem
+          onClick={() => {
+            authService.logout();
+            router.replace("/login");
+          }}
+        >
           <LogOutIcon />
           Sign out
-          <span className="ml-auto text-xs text-muted-foreground">Soon</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

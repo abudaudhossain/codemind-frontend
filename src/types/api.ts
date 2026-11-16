@@ -18,3 +18,47 @@ export interface PaginatedData<T> {
   items: T[];
   meta: PaginationMeta;
 }
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+}
+
+export interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+export interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ConversationMessage {
+  id: string;
+  content: string;
+  role?: "user" | "assistant";
+  createdAt: string;
+}
+
+export interface ConversationDetails {
+  id: string;
+  title: string;
+  repositoryId: string;
+  messages: ConversationMessage[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SearchResult {
+  citationId?: string;
+  filePath: string;
+  startLine?: number;
+  endLine?: number;
+  similarity?: number;
+  content?: string;
+  url?: string;
+}

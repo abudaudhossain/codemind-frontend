@@ -1,6 +1,8 @@
-import { apiClient, getAccessToken, unwrapApiData } from "@/services/api-client";
+import {
+  apiClient,
+  getAccessToken,
+} from "@/services/api-client";
 import { toApiClientError } from "@/lib/api-error";
-import type { ApiResponse, GithubInstallResult } from "@/types";
 
 /**
  * Verified CAP GitHub endpoints:
@@ -25,45 +27,31 @@ export const githubService = {
   },
 
   /**
-   * Initiate GitHub App install. CAP responds with a 302 to GitHub.
-   * Axios follows redirects for XHR and may lose the Location target for
-   * cross-origin GitHub URLs, so we request without following and read
-   * Location when available; otherwise fall back to window navigation.
+   * Forward the bearer token through a same-origin route before navigating.
+   * Browser navigations cannot set an Authorization header themselves.
    */
   async startInstallation(): Promise<void> {
-    try {
-      const token = getAccessToken();
-      if (!token) {
-        throw toApiClientError(
-          new Error("Sign in is required before connecting GitHub.")
-        );
-      }
-
-      const response = await apiClient.get<ApiResponse<GithubInstallResult> | string>(
-        "/github/install",
-        {
-          maxRedirects: 0,
-          validateStatus: (status) =>
-            (status >= 200 && status < 400) || status === 302,
-        }
+    const token = getAccessToken();
+    if (!token) {
+      throw toApiClientError(
+        new Error("Sign in is required before connecting GitHub.")
       );
+    }
 
-      const location =
-        typeof response.headers.location === "string"
-          ? response.headers.location
-          : null;
+    try {
+      const response = await fetch("/api/github/install", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body = (await response.json()) as {
+        location?: string;
+        message?: string;
+      };
 
-      if (location) {
-        window.location.assign(location);
-        return;
+      if (!response.ok || !body.location) {
+        throw new Error(body.message ?? "Unable to start GitHub installation.");
       }
 
-      // If the server returned JSON instead of redirect (unexpected).
-      if (response.data && typeof response.data === "object") {
-        unwrapApiData(response.data);
-      }
-
-      window.location.assign(this.getInstallUrl());
+      window.location.assign(body.location);
     } catch (error) {
       throw toApiClientError(error);
     }

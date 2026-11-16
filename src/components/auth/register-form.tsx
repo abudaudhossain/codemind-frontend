@@ -15,8 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
+import { useRegister } from "@/hooks/use-auth";
+import { getErrorMessage } from "@/lib/api-error";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function RegisterForm() {
+  const router = useRouter();
+  const registerMutation = useRegister();
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -31,8 +38,14 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = handleSubmit(() => {
-    // Auth is intentionally not implemented in this foundation phase.
+  const onSubmit = handleSubmit(async (values) => {
+    setFormError(null);
+    try {
+      await registerMutation.mutateAsync(values);
+      router.replace("/login");
+    } catch (error) {
+      setFormError(getErrorMessage(error));
+    }
   });
 
   return (
@@ -40,7 +53,7 @@ export function RegisterForm() {
       <CardHeader>
         <CardTitle>Create account</CardTitle>
         <CardDescription>
-          Set up your CodeMind workspace. Account creation will connect to NestJS later.
+          Set up your CodeMind workspace.
         </CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit} noValidate>
@@ -58,6 +71,11 @@ export function RegisterForm() {
               <p className="text-xs text-destructive">{errors.name.message}</p>
             ) : null}
           </div>
+          {formError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {formError}
+            </p>
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -100,8 +118,8 @@ export function RegisterForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            Create account
+          <Button type="submit" className="w-full" disabled={isSubmitting || registerMutation.isPending}>
+            {registerMutation.isPending ? "Creating account…" : "Create account"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
             Already have an account?{" "}

@@ -14,6 +14,7 @@ export const apiClient = axios.create({
 });
 
 const ACCESS_TOKEN_KEY = "codemind_access_token";
+const REFRESH_TOKEN_KEY = "codemind_refresh_token";
 
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -29,6 +30,28 @@ export function setAccessToken(token: string | null): void {
   }
 }
 
+export function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+export function setRefreshToken(token: string | null): void {
+  if (typeof window === "undefined") return;
+  if (token) {
+    window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
+  } else {
+    window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+  }
+}
+
+export function clearAuthTokens(): void {
+  setAccessToken(null);
+  setRefreshToken(null);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("codemind-auth-change"));
+  }
+}
+
 apiClient.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
@@ -39,7 +62,16 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: unknown) => Promise.reject(error)
+  (error: unknown) => {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      typeof window !== "undefined"
+    ) {
+      clearAuthTokens();
+    }
+    return Promise.reject(error);
+  }
 );
 
 /** Unwrap CAP `{ success, data }` envelope. */

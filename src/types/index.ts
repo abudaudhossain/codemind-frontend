@@ -29,6 +29,14 @@ export type {
 } from "./repository";
 
 export type { ApiResponse, PaginationMeta, PaginatedData } from "./api";
+export type {
+  AuthTokens,
+  LoginFormValues,
+  RegisterFormValues,
+  ConversationDetails,
+  ConversationMessage,
+  SearchResult,
+} from "./api";
 
 /** Alias for Phase 1 dashboard components. */
 export type { DashboardRepository as Repository } from "./legacy";
