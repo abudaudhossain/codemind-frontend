@@ -6,12 +6,15 @@
 
 import type { FileTreeNode, RepositoryFileContent } from "@/types";
 
+const NOW = new Date().toISOString();
+
 const SAMPLE_FILES: Record<string, RepositoryFileContent> = {
   "src/index.ts": {
     path: "src/index.ts",
     language: "typescript",
     size: 420,
     isIndexed: true,
+    updatedAt: NOW,
     content: `import { createApp } from "./app";
 import { loadConfig } from "./config";
 
@@ -33,6 +36,7 @@ main().catch((error) => {
     language: "typescript",
     size: 680,
     isIndexed: true,
+    updatedAt: NOW,
     content: `import express from "express";
 import { authRouter } from "./routes/auth";
 import { billingRouter } from "./routes/billing";
@@ -54,6 +58,7 @@ export function createApp(config: { corsOrigin: string }) {
     language: "typescript",
     size: 910,
     isIndexed: true,
+    updatedAt: NOW,
     content: `import { Router } from "express";
 import { createInvoice } from "../services/invoices";
 
@@ -82,6 +87,7 @@ billingRouter.get("/invoices/:id", async (req, res, next) => {
     language: "markdown",
     size: 320,
     isIndexed: true,
+    updatedAt: NOW,
     content: `# Sample repository
 
 Temporary mock source used while CAP exposes no file-list API.
@@ -96,6 +102,7 @@ Temporary mock source used while CAP exposes no file-list API.
     language: "json",
     size: 280,
     isIndexed: true,
+    updatedAt: NOW,
     content: `{
   "name": "payments-service",
   "version": "1.4.0",

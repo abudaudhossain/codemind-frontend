@@ -154,6 +154,8 @@ export interface FileTreeNode {
   type: "file" | "folder";
   language?: string | null;
   size?: number;
+  isIndexed?: boolean;
+  updatedAt?: string;
   children?: FileTreeNode[];
 }
 
@@ -163,6 +165,7 @@ export interface RepositoryFileContent {
   content: string;
   size: number;
   isIndexed: boolean;
+  updatedAt?: string;
 }
 
 export interface GithubConnectionState {

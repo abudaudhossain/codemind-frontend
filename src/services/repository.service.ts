@@ -5,9 +5,11 @@ import type {
   AskRepositoryResult,
   ChunkSourceResult,
   FetchSourceResult,
+  FileTreeNode,
   GenerateEmbeddingsResult,
   GithubRepository,
   PaginatedData,
+  RepositoryFileContent,
   RepositoryListQuery,
   SyncRepositoryResult,
 } from "@/types";
@@ -15,6 +17,8 @@ import type {
 /**
  * Verified CAP endpoints under `/github/repositories`:
  * - GET    /github/repositories
+ * - GET    /github/repositories/:id/files
+ * - GET    /github/repositories/:id/files/content?path=
  * - PUT    /github/repositories/:id/connect
  * - PUT    /github/repositories/:id/disconnect
  * - PUT    /github/repositories/:id/sync
@@ -27,7 +31,6 @@ import type {
  * - GET /github/repositories/:id
  * - DELETE repository
  * - GET indexing status / progress
- * - GET files / file content
  */
 export const repositoryService = {
   async list(
@@ -37,6 +40,32 @@ export const repositoryService = {
       const response = await apiClient.get<
         ApiResponse<PaginatedData<GithubRepository>>
       >("/github/repositories", { params: query });
+      return unwrapApiData(response.data);
+    } catch (error) {
+      throw toApiClientError(error);
+    }
+  },
+
+  async getFileTree(repositoryId: string): Promise<FileTreeNode[]> {
+    try {
+      const response = await apiClient.get<ApiResponse<FileTreeNode[]>>(
+        `/github/repositories/${repositoryId}/files`
+      );
+      return unwrapApiData(response.data);
+    } catch (error) {
+      throw toApiClientError(error);
+    }
+  },
+
+  async getFileContent(
+    repositoryId: string,
+    path: string
+  ): Promise<RepositoryFileContent> {
+    try {
+      const response = await apiClient.get<ApiResponse<RepositoryFileContent>>(
+        `/github/repositories/${repositoryId}/files/content`,
+        { params: { path } }
+      );
       return unwrapApiData(response.data);
     } catch (error) {
       throw toApiClientError(error);

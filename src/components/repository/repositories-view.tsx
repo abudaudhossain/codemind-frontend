@@ -77,7 +77,7 @@ export function RepositoriesView() {
     <div className="space-y-6">
       <PageHeader
         title="Repositories"
-        description="Manage your connected GitHub repositories."
+        description="Connect GitHub repositories, track indexing health, and open code-aware chat."
         actions={
           <Button onClick={() => setAddOpen(true)}>
             <PlusIcon />
@@ -105,50 +105,62 @@ export function RepositoriesView() {
         <>
           <RepositoryStats stats={stats} />
 
-          <RepositoryFilters
-            filters={filters}
-            languages={languages}
-            onChange={setFilters}
-          />
-
-          {actionError ? (
-            <p className="text-sm text-destructive" role="alert">
-              {actionError}
-            </p>
-          ) : null}
-
-          {repositories.length === 0 ? (
-            <EmptyState
-              icon={GitBranchIcon}
-              title="No repositories connected"
-              description="Add a GitHub repository to begin semantic indexing and code-aware chat."
-              action={{
-                label: "Add Repository",
-                onClick: () => setAddOpen(true),
-              }}
-            />
-          ) : filtered.length === 0 ? (
-            <EmptyState
-              icon={GitBranchIcon}
-              title="No matching repositories"
-              description="Try adjusting search, status, or language filters."
-              action={{
-                label: "Clear filters",
-                onClick: () => setFilters(INITIAL_FILTERS),
-              }}
-            />
-          ) : (
-            <div className="grid gap-3">
-              {filtered.map((repository) => (
-                <RepositoryListItem
-                  key={repository.id}
-                  repository={repository}
-                  onRemove={setPendingRemove}
-                  onReindex={setPendingReindex}
-                />
-              ))}
+          <section className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+            <div className="border-b border-border px-4 py-4">
+              <RepositoryFilters
+                filters={filters}
+                languages={languages}
+                resultCount={filtered.length}
+                totalCount={repositories.length}
+                onChange={setFilters}
+                onReset={() => setFilters(INITIAL_FILTERS)}
+              />
             </div>
-          )}
+
+            {actionError ? (
+              <div
+                className="border-b border-destructive/20 bg-destructive/5 px-4 py-2.5 text-sm text-destructive"
+                role="alert"
+              >
+                {actionError}
+              </div>
+            ) : null}
+
+            {repositories.length === 0 ? (
+              <EmptyState
+                icon={GitBranchIcon}
+                title="No repositories connected"
+                description="Add a GitHub repository to begin semantic indexing and code-aware chat."
+                action={{
+                  label: "Add Repository",
+                  onClick: () => setAddOpen(true),
+                }}
+                className="rounded-none border-0 bg-transparent"
+              />
+            ) : filtered.length === 0 ? (
+              <EmptyState
+                icon={GitBranchIcon}
+                title="No matching repositories"
+                description="Try adjusting search, status, or language filters."
+                action={{
+                  label: "Clear filters",
+                  onClick: () => setFilters(INITIAL_FILTERS),
+                }}
+                className="rounded-none border-0 bg-transparent"
+              />
+            ) : (
+              <div className="divide-y divide-border" role="list">
+                {filtered.map((repository) => (
+                  <RepositoryListItem
+                    key={repository.id}
+                    repository={repository}
+                    onRemove={setPendingRemove}
+                    onReindex={setPendingReindex}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
         </>
       )}
 
@@ -177,14 +189,26 @@ export function RepositoriesView() {
         onOpenChange={(open) => {
           if (!open) setPendingReindex(null);
         }}
-        title="Re-index repository"
+        title={
+          pendingReindex?.status === "FAILED"
+            ? "Retry indexing"
+            : pendingReindex?.status === "PENDING"
+              ? "Start indexing"
+              : "Re-index repository"
+        }
         description={
           pendingReindex
             ? `Run sync, source fetch, chunking, and embeddings for ${pendingReindex.fullName}?`
             : null
         }
-        confirmLabel="Re-index"
-        confirmingLabel="Re-indexing…"
+        confirmLabel={
+          pendingReindex?.status === "FAILED"
+            ? "Retry"
+            : pendingReindex?.status === "PENDING"
+              ? "Start"
+              : "Re-index"
+        }
+        confirmingLabel="Indexing…"
         isPending={reindexMutation.isPending}
         onConfirm={confirmReindex}
       />

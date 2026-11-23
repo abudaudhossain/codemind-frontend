@@ -61,20 +61,33 @@ export function DashboardSkeleton() {
 
 export function RepositoryListSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="grid gap-3">
-      {Array.from({ length: rows }).map((_, index) => (
-        <div
-          key={index}
-          className="flex items-start gap-3 rounded-xl border border-border p-4"
-        >
-          <Skeleton className="size-9 rounded-lg" />
-          <div className="min-w-0 flex-1 space-y-2">
-            <Skeleton className="h-4 w-1/3" />
-            <Skeleton className="h-3 w-2/3" />
-            <Skeleton className="h-3 w-1/2" />
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+      <div className="space-y-3 border-b border-border px-4 py-4">
+        <div className="flex flex-col gap-3 lg:flex-row">
+          <Skeleton className="h-8 flex-1" />
+          <div className="grid gap-2 sm:grid-cols-3 lg:w-[min(100%,28rem)]">
+            <Skeleton className="h-8" />
+            <Skeleton className="h-8" />
+            <Skeleton className="h-8" />
           </div>
         </div>
-      ))}
+        <Skeleton className="h-3 w-36" />
+      </div>
+      <div className="divide-y divide-border">
+        {Array.from({ length: rows }).map((_, index) => (
+          <div
+            key={index}
+            className="flex items-start gap-3 px-4 py-3.5"
+          >
+            <Skeleton className="size-10 rounded-xl" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-3 w-2/3" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
