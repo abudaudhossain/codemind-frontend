@@ -37,10 +37,21 @@ export interface RegisterFormValues {
   confirmPassword: string;
 }
 
+export interface ConversationMessageSource {
+  citationId: string;
+  filePath: string;
+  startLine: number;
+  endLine: number;
+  similarity: number;
+  url: string;
+}
+
 export interface ConversationMessage {
   id: string;
   content: string;
-  role?: "user" | "assistant";
+  role: "user" | "assistant";
+  model?: string;
+  sources?: ConversationMessageSource[];
   createdAt: string;
 }
 
@@ -51,6 +62,11 @@ export interface ConversationDetails {
   messages: ConversationMessage[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SendConversationMessageResult {
+  userMessage: ConversationMessage;
+  assistantMessage: ConversationMessage;
 }
 
 export interface SearchResult {

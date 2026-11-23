@@ -27,10 +27,25 @@ export function useConversation(id: string | null) {
 export function useCreateConversation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ repositoryId, title }: { repositoryId: string; title: string }) =>
-      conversationService.create(repositoryId, title),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+    mutationFn: ({
+      repositoryId,
+      title,
+    }: {
+      repositoryId: string;
+      title?: string;
+    }) => conversationService.create(repositoryId, title),
+    onSuccess: (created) => {
+      queryClient.setQueryData(
+        conversationKeys.list(),
+        (current: Awaited<
+          ReturnType<typeof conversationService.list>
+        > | undefined) => {
+          if (!current) return [created];
+          if (current.some((item) => item.id === created.id)) return current;
+          return [created, ...current];
+        }
+      );
+      void queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }
@@ -38,13 +53,29 @@ export function useCreateConversation() {
 export function useSendConversationMessage(id: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (content: string) => conversationService.sendMessage(id as string, content),
-    onSuccess: () => {
+    mutationFn: (content: string) =>
+      conversationService.sendMessage(id as string, content),
+    onSuccess: (result) => {
       if (id) {
-        void queryClient.invalidateQueries({
-          queryKey: conversationKeys.details(id),
-        });
+        queryClient.setQueryData(
+          conversationKeys.details(id),
+          (current: Awaited<
+            ReturnType<typeof conversationService.details>
+          > | undefined) => {
+            if (!current) return current;
+            return {
+              ...current,
+              updatedAt: new Date().toISOString(),
+              messages: [
+                ...current.messages,
+                result.userMessage,
+                result.assistantMessage,
+              ],
+            };
+          }
+        );
       }
+      void queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }

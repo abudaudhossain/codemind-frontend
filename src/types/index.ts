@@ -35,6 +35,8 @@ export type {
   RegisterFormValues,
   ConversationDetails,
   ConversationMessage,
+  ConversationMessageSource,
+  SendConversationMessageResult,
   SearchResult,
 } from "./api";
 

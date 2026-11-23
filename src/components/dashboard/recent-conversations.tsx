@@ -43,7 +43,7 @@ export function RecentConversations({ conversations }: RecentConversationsProps)
             {conversations.map((conversation) => (
               <li key={conversation.id}>
                 <Link
-                  href={`/chat?repositoryId=${conversation.repositoryId}`}
+                  href={`/chat?conversationId=${conversation.id}`}
                   className="flex items-start gap-3 rounded-lg py-3 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground">

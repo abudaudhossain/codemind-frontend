@@ -5,6 +5,7 @@ import type {
   ConversationDetails,
   Conversation,
   ConversationMessage,
+  SendConversationMessageResult,
 } from "@/types";
 
 export const conversationService = {
@@ -19,7 +20,7 @@ export const conversationService = {
     }
   },
 
-  async create(repositoryId: string, title: string): Promise<Conversation> {
+  async create(repositoryId: string, title?: string): Promise<Conversation> {
     try {
       const response = await apiClient.post<ApiResponse<Conversation>>(
         "/conversations",
@@ -42,15 +43,19 @@ export const conversationService = {
     }
   },
 
-  async sendMessage(id: string, content: string): Promise<ConversationMessage> {
+  async sendMessage(
+    id: string,
+    content: string
+  ): Promise<SendConversationMessageResult> {
     try {
-      const response = await apiClient.post<ApiResponse<ConversationMessage>>(
-        `/conversations/${id}/messages`,
-        { content }
-      );
+      const response = await apiClient.post<
+        ApiResponse<SendConversationMessageResult>
+      >(`/conversations/${id}/messages`, { content });
       return unwrapApiData(response.data);
     } catch (error) {
       throw toApiClientError(error);
     }
   },
 };
+
+export type { ConversationMessage };
