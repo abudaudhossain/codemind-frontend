@@ -46,28 +46,28 @@ export function toApiClientError(error: unknown): ApiClientError {
 
     if (status === 401) {
       return new ApiClientError(
-        "Your session has expired. Please sign in again.",
+        payloadMessage ?? "Your session has expired. Please sign in again.",
         { code: "UNAUTHORIZED", status }
       );
     }
 
     if (status === 403) {
       return new ApiClientError(
-        "You do not have permission to perform this action.",
+        payloadMessage ?? "You do not have permission to perform this action.",
         { code: "FORBIDDEN", status }
       );
     }
 
     if (status === 404) {
       return new ApiClientError(
-        payloadMessage ?? "The requested repository was not found.",
+        payloadMessage ?? "The requested resource was not found.",
         { code: "NOT_FOUND", status }
       );
     }
 
     if (status === 409) {
       return new ApiClientError(
-        payloadMessage ?? "This repository is already connected.",
+        payloadMessage ?? "This resource already exists.",
         { code: "CONFLICT", status }
       );
     }
@@ -87,4 +87,12 @@ export function toApiClientError(error: unknown): ApiClientError {
 
 export function getErrorMessage(error: unknown): string {
   return toApiClientError(error).message;
+}
+
+export function isUnverifiedAccountError(error: unknown): boolean {
+  const apiError = toApiClientError(error);
+  return (
+    apiError.status === 403 &&
+    /verify your email/i.test(apiError.message)
+  );
 }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2Icon } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/lib/api-error";
 import { z } from "zod";
@@ -26,7 +26,13 @@ const resendVerificationSchema = z.object({
 
 type ResendVerificationValues = z.infer<typeof resendVerificationSchema>;
 
-export function ResendVerificationForm() {
+type ResendVerificationFormProps = {
+  initialEmail?: string;
+};
+
+export function ResendVerificationForm({
+  initialEmail = "",
+}: ResendVerificationFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const {
@@ -35,7 +41,7 @@ export function ResendVerificationForm() {
     formState: { errors, isSubmitting },
   } = useForm<ResendVerificationValues>({
     resolver: zodResolver(resendVerificationSchema),
-    defaultValues: { email: "" },
+    defaultValues: { email: initialEmail },
   });
 
   const onSubmit = handleSubmit(async ({ email }) => {
@@ -54,12 +60,31 @@ export function ResendVerificationForm() {
       <CardHeader>
         <CardTitle>Resend verification email</CardTitle>
         <CardDescription>
-          Enter your email address and we&apos;ll send you a new verification
-          link.
+          {initialEmail ? (
+            <>
+              Verify your email to finish signing in. We&apos;ll send a new
+              verification link.
+            </>
+          ) : (
+            <>
+              Enter your email address and we&apos;ll send you a new verification
+              link.
+            </>
+          )}
         </CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit} noValidate>
         <CardContent className="space-y-4">
+          {formError ? (
+            <div
+              className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+              role="alert"
+            >
+              <AlertCircleIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <p>{formError}</p>
+            </div>
+          ) : null}
+
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -78,11 +103,6 @@ export function ResendVerificationForm() {
             <p className="flex items-center gap-2 text-sm text-green-600" role="status">
               <CheckCircle2Icon className="size-4" />
               If the account exists, a verification email has been sent.
-            </p>
-          ) : null}
-          {formError ? (
-            <p className="text-sm text-destructive" role="alert">
-              {formError}
             </p>
           ) : null}
         </CardContent>
