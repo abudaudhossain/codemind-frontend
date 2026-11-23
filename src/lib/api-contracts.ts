@@ -16,6 +16,8 @@
  * POST /github/repositories/:id/chunk-source   JWT
  * POST /github/repositories/:id/generate-embeddings JWT
  * POST /github/repositories/:id/ask            JWT { question }
+ *      → Chat page: select connected repo → ask → answer + sources
+ *      (No CAP /conversations API; threads are session-local in the UI)
  *
  * === Missing (UI uses isolated mocks / workarounds) ===
  * GET  /github/installation|status             connection status

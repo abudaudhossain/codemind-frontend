@@ -10,7 +10,7 @@ interface ConversationListItemProps {
 
 export function ConversationListItem({
   conversation,
-  href = "/chat",
+  href = `/chat?repositoryId=${conversation.repositoryId}`,
 }: ConversationListItemProps) {
   return (
     <Link
